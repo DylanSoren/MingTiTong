@@ -1,6 +1,5 @@
 # 公共配置文件
-# @author <a href="https://github.com/liyupi">程序员鱼皮</a>
-# @from <a href="https://yupi.icu">编程导航知识星球</a>
+# @author sqyi
 spring:
   application:
     name: yidada-backend
@@ -14,7 +13,7 @@ spring:
   # session 配置
   session:
     # todo 取消注释开启分布式 session（须先配置 Redis）
-    # store-type: redis
+#    store-type: redis
     # 30 天过期
     timeout: 2592000
   # 数据库配置
@@ -73,4 +72,4 @@ knife4j:
       default:
         api-rule: package
         api-rule-resources:
-          - com.yupi.yidada.controller
+          - com.sqyi.yidada.controller
