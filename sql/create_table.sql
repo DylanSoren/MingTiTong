@@ -1,6 +1,3 @@
-# 数据库初始化
-# @author sqyi
-
 -- 创建库
 create database if not exists `ai-basedquestionansweringapplicationplatformtables`;
 

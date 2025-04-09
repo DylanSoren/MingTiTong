@@ -3,6 +3,9 @@ package com.sqyi.yidada.model.enums;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.apache.commons.lang3.ObjectUtils;
 
 /**
@@ -11,6 +14,8 @@ import org.apache.commons.lang3.ObjectUtils;
  * @author sqyi
  *   
  */
+@Getter
+@AllArgsConstructor
 public enum UserRoleEnum {
 
     USER("用户", "user"),
@@ -20,11 +25,6 @@ public enum UserRoleEnum {
     private final String text;
 
     private final String value;
-
-    UserRoleEnum(String text, String value) {
-        this.text = text;
-        this.value = value;
-    }
 
     /**
      * 获取值列表
@@ -53,11 +53,4 @@ public enum UserRoleEnum {
         return null;
     }
 
-    public String getValue() {
-        return value;
-    }
-
-    public String getText() {
-        return text;
-    }
 }

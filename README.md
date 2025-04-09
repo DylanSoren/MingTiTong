@@ -11,14 +11,12 @@
 - MyBatis + MyBatis Plus 数据访问（开启分页）
 - Spring Boot 调试工具和项目处理器
 - Spring AOP 切面编程
-- Spring Scheduler 定时任务
 - Spring 事务注解
 
 ### 数据存储
 
 - MySQL 数据库
 - Redis 内存数据库
-- Elasticsearch 搜索引擎
 - 腾讯云 COS 对象存储
 
 ### 工具类
@@ -67,11 +65,11 @@
 
 ## 快速上手
 
-> 所有需要修改的地方鱼皮都标记了 `todo`，便于大家找到修改的位置~
+> 所有需要修改的地方都标记了 `todo`
 
 ### MySQL 数据库
 
-1）修改 `application.yml` 的数据库配置为你自己的：
+1）修改 `application.yml` 的数据库配置为自己的：
 
 ```yml
 spring:
@@ -86,11 +84,9 @@ spring:
 
 3）启动项目，访问 `http://localhost:8101/api/doc.html` 即可打开接口文档，不需要写前端就能在线调试接口了~
 
-![](doc/swagger.png)
-
 ### Redis 分布式登录
 
-1）修改 `application.yml` 的 Redis 配置为你自己的：
+1）修改 `application.yml` 的 Redis 配置为自己的：
 
 ```yml
 spring:
@@ -99,7 +95,6 @@ spring:
     host: localhost
     port: 6379
     timeout: 5000
-    password: 123456
 ```
 
 2）修改 `application.yml` 中的 session 存储方式：
@@ -125,37 +120,6 @@ spring:
 @SpringBootApplication
 ```
 
-### Elasticsearch 搜索引擎
-
-1）修改 `application.yml` 的 Elasticsearch 配置为你自己的：
-
-```yml
-spring:
-  elasticsearch:
-    uris: http://localhost:9200
-    username: root
-    password: 123456
-```
-
-2）复制 `sql/post_es_mapping.json` 文件中的内容，通过调用 Elasticsearch 的接口或者 Kibana Dev Tools 来创建索引（相当于数据库建表）
-
-```
-PUT post_v1
-{
- 参数见 sql/post_es_mapping.json 文件
-}
-```
-
-这步不会操作的话需要补充下 Elasticsearch 的知识，或者自行百度一下~
-
-3）开启同步任务，将数据库的帖子同步到 Elasticsearch
-
-找到 job 目录下的 `FullSyncPostToEs` 和 `IncSyncPostToEs` 文件，取消掉 `@Component` 注解的注释，再次执行程序即可触发同步：
-
-```java
-// todo 取消注释开启任务
-//@Component
-```
 
 ### 业务代码生成器
 

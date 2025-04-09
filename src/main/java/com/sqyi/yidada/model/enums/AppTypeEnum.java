@@ -1,35 +1,36 @@
 package com.sqyi.yidada.model.enums;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.ObjectUtils;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
- * 文件上传业务类型枚举
+ * 应用类型枚举
  *
  * @author sqyi
  *   
  */
 @Getter
 @AllArgsConstructor
-public enum FileUploadBizEnum {
+public enum AppTypeEnum {
 
-    USER_AVATAR("用户头像", "user_avatar");
+    SCORE("得分类", 0),
+    ADMIN("测评类", 1);
 
     private final String text;
 
-    private final String value;
+    private final Integer value;
 
     /**
      * 获取值列表
      *
      * @return
      */
-    public static List<String> getValues() {
+    public static List<Integer> getValues() {
         return Arrays.stream(values()).map(item -> item.value).collect(Collectors.toList());
     }
 
@@ -39,11 +40,11 @@ public enum FileUploadBizEnum {
      * @param value
      * @return
      */
-    public static FileUploadBizEnum getEnumByValue(String value) {
+    public static AppTypeEnum getEnumByValue(Integer value) {
         if (ObjectUtils.isEmpty(value)) {
             return null;
         }
-        for (FileUploadBizEnum anEnum : FileUploadBizEnum.values()) {
+        for (AppTypeEnum anEnum : AppTypeEnum.values()) {
             if (anEnum.value.equals(value)) {
                 return anEnum;
             }
