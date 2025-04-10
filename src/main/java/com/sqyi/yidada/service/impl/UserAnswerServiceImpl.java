@@ -12,6 +12,7 @@ import com.sqyi.yidada.model.dto.useranswer.UserAnswerQueryRequest;
 import com.sqyi.yidada.model.entity.App;
 import com.sqyi.yidada.model.entity.User;
 import com.sqyi.yidada.model.entity.UserAnswer;
+import com.sqyi.yidada.model.enums.ReviewStatusEnum;
 import com.sqyi.yidada.model.vo.UserAnswerVO;
 import com.sqyi.yidada.model.vo.UserVO;
 import com.sqyi.yidada.service.AppService;
@@ -50,7 +51,7 @@ public class UserAnswerServiceImpl extends ServiceImpl<UserAnswerMapper, UserAns
      * 校验数据
      *
      * @param userAnswer
-     * @param add        对创建的数据进行校验
+     * @param add
      */
     @Override
     public void validUserAnswer(UserAnswer userAnswer, boolean add) {
@@ -61,6 +62,10 @@ public class UserAnswerServiceImpl extends ServiceImpl<UserAnswerMapper, UserAns
         if (add) {
             // 补充校验规则
             ThrowUtils.throwIf(appId == null || appId <= 0, ErrorCode.PARAMS_ERROR, "appId 非法");
+            App app = appService.getById(appId);
+            ThrowUtils.throwIf(app == null, ErrorCode.PARAMS_ERROR, "应用不存在");
+            ThrowUtils.throwIf(!ReviewStatusEnum.PASS.equals(ReviewStatusEnum.getEnumByValue(app.getReviewStatus())),
+                    ErrorCode.NO_AUTH_ERROR, "应用未审核通过");
         }
         // 修改数据时，有参数则校验
         // 补充校验规则
