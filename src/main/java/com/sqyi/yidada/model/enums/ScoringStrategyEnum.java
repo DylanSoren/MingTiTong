@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  */
 @Getter
 @AllArgsConstructor
-public enum AppScoringStrategyEnum {
+public enum ScoringStrategyEnum {
 
     CUSTOM("自定义", 0),
     AI("AI", 1);
@@ -40,11 +40,11 @@ public enum AppScoringStrategyEnum {
      * @param value
      * @return
      */
-    public static AppScoringStrategyEnum getEnumByValue(Integer value) {
+    public static ScoringStrategyEnum getEnumByValue(Integer value) {
         if (ObjectUtils.isEmpty(value)) {
             return null;
         }
-        for (AppScoringStrategyEnum anEnum : AppScoringStrategyEnum.values()) {
+        for (ScoringStrategyEnum anEnum : ScoringStrategyEnum.values()) {
             if (anEnum.value.equals(value)) {
                 return anEnum;
             }

@@ -1,5 +1,6 @@
 package com.sqyi.yidada.controller;
 
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sqyi.yidada.annotation.AuthCheck;
 import com.sqyi.yidada.common.BaseResponse;
@@ -9,12 +10,14 @@ import com.sqyi.yidada.common.ResultUtils;
 import com.sqyi.yidada.constant.UserConstant;
 import com.sqyi.yidada.exception.BusinessException;
 import com.sqyi.yidada.exception.ThrowUtils;
-import com.sqyi.yidada.model.dto.userAnswer.UserAnswerAddRequest;
-import com.sqyi.yidada.model.dto.userAnswer.UserAnswerEditRequest;
-import com.sqyi.yidada.model.dto.userAnswer.UserAnswerQueryRequest;
-import com.sqyi.yidada.model.dto.userAnswer.UserAnswerUpdateRequest;
+import com.sqyi.yidada.model.dto.useranswer.UserAnswerAddRequest;
+import com.sqyi.yidada.model.dto.useranswer.UserAnswerEditRequest;
+import com.sqyi.yidada.model.dto.useranswer.UserAnswerQueryRequest;
+import com.sqyi.yidada.model.dto.useranswer.UserAnswerUpdateRequest;
+import com.sqyi.yidada.model.entity.App;
 import com.sqyi.yidada.model.entity.UserAnswer;
 import com.sqyi.yidada.model.entity.User;
+import com.sqyi.yidada.model.enums.ReviewStatusEnum;
 import com.sqyi.yidada.model.vo.UserAnswerVO;
 import com.sqyi.yidada.service.UserAnswerService;
 import com.sqyi.yidada.service.UserService;
@@ -24,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * 用户答案接口
@@ -42,6 +46,8 @@ public class UserAnswerController {
     @Resource
     private UserService userService;
 
+
+
     // region 增删改查
 
     /**
@@ -54,12 +60,14 @@ public class UserAnswerController {
     @PostMapping("/add")
     public BaseResponse<Long> addUserAnswer(@RequestBody UserAnswerAddRequest userAnswerAddRequest, HttpServletRequest request) {
         ThrowUtils.throwIf(userAnswerAddRequest == null, ErrorCode.PARAMS_ERROR);
-        // todo 在此处将实体类和 DTO 进行转换
+        // 将实体类和 DTO 进行转换
         UserAnswer userAnswer = new UserAnswer();
         BeanUtils.copyProperties(userAnswerAddRequest, userAnswer);
+        List<String> choices = userAnswerAddRequest.getChoices();
+        userAnswer.setChoices(JSONUtil.toJsonStr(choices));
         // 数据校验
         userAnswerService.validUserAnswer(userAnswer, true);
-        // todo 填充默认值
+        // 填充默认值
         User loginUser = userService.getLoginUser(request);
         userAnswer.setUserId(loginUser.getId());
         // 写入数据库

@@ -2,10 +2,7 @@ package com.sqyi.yidada.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sqyi.yidada.annotation.AuthCheck;
-import com.sqyi.yidada.common.BaseResponse;
-import com.sqyi.yidada.common.DeleteRequest;
-import com.sqyi.yidada.common.ErrorCode;
-import com.sqyi.yidada.common.ResultUtils;
+import com.sqyi.yidada.common.*;
 import com.sqyi.yidada.constant.UserConstant;
 import com.sqyi.yidada.exception.BusinessException;
 import com.sqyi.yidada.exception.ThrowUtils;
@@ -15,6 +12,7 @@ import com.sqyi.yidada.model.dto.app.AppQueryRequest;
 import com.sqyi.yidada.model.dto.app.AppUpdateRequest;
 import com.sqyi.yidada.model.entity.App;
 import com.sqyi.yidada.model.entity.User;
+import com.sqyi.yidada.model.enums.ReviewStatusEnum;
 import com.sqyi.yidada.model.vo.AppVO;
 import com.sqyi.yidada.service.AppService;
 import com.sqyi.yidada.service.UserService;
@@ -24,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 
 /**
  * 应用接口
@@ -54,14 +53,16 @@ public class AppController {
     @PostMapping("/add")
     public BaseResponse<Long> addApp(@RequestBody AppAddRequest appAddRequest, HttpServletRequest request) {
         ThrowUtils.throwIf(appAddRequest == null, ErrorCode.PARAMS_ERROR);
-        // todo 在此处将实体类和 DTO 进行转换
+        // 将实体类和 DTO 进行转换
         App app = new App();
         BeanUtils.copyProperties(appAddRequest, app);
         // 数据校验
         appService.validApp(app, true);
-        // todo 填充默认值
+        // 填充默认值
         User loginUser = userService.getLoginUser(request);
         app.setUserId(loginUser.getId());
+        // 审核状态设置为待审核
+        app.setReviewStatus(ReviewStatusEnum.REVIEWING.getValue());
         // 写入数据库
         boolean result = appService.save(app);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
@@ -82,13 +83,13 @@ public class AppController {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        User user = userService.getLoginUser(request);
         long id = deleteRequest.getId();
         // 判断是否存在
         App oldApp = appService.getById(id);
         ThrowUtils.throwIf(oldApp == null, ErrorCode.NOT_FOUND_ERROR);
+        User loginUser = userService.getLoginUser(request);
         // 仅本人或管理员可删除
-        if (!oldApp.getUserId().equals(user.getId()) && !userService.isAdmin(request)) {
+        if (!oldApp.getUserId().equals(loginUser.getId()) && !userService.isAdmin(request)) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
         // 操作数据库
@@ -109,7 +110,7 @@ public class AppController {
         if (appUpdateRequest == null || appUpdateRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        // todo 在此处将实体类和 DTO 进行转换
+        // 将实体类和 DTO 进行转换
         App app = new App();
         BeanUtils.copyProperties(appUpdateRequest, app);
         // 数据校验
@@ -215,20 +216,22 @@ public class AppController {
         if (appEditRequest == null || appEditRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        // todo 在此处将实体类和 DTO 进行转换
+        // 将实体类和 DTO 进行转换
         App app = new App();
         BeanUtils.copyProperties(appEditRequest, app);
         // 数据校验
         appService.validApp(app, false);
-        User loginUser = userService.getLoginUser(request);
         // 判断是否存在
         long id = appEditRequest.getId();
         App oldApp = appService.getById(id);
         ThrowUtils.throwIf(oldApp == null, ErrorCode.NOT_FOUND_ERROR);
+        User loginUser = userService.getLoginUser(request);
         // 仅本人或管理员可编辑
         if (!oldApp.getUserId().equals(loginUser.getId()) && !userService.isAdmin(loginUser)) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
+        // 更新后重置审核状态
+        app.setReviewStatus(ReviewStatusEnum.REVIEWING.getValue());
         // 操作数据库
         boolean result = appService.updateById(app);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
@@ -236,4 +239,42 @@ public class AppController {
     }
 
     // endregion
+
+    /**
+     * 应用审核
+     *
+     * @param reviewRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/review")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Boolean> doAppReview(@RequestBody ReviewRequest reviewRequest, HttpServletRequest request) {
+        ThrowUtils.throwIf(reviewRequest == null, ErrorCode.PARAMS_ERROR);
+        Long id = reviewRequest.getId();
+        Integer reviewStatus = reviewRequest.getReviewStatus();
+        // 校验
+        ReviewStatusEnum reviewStatusEnum = ReviewStatusEnum.getEnumByValue(reviewStatus);
+        if (id == null || reviewStatusEnum == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        // 判断是否存在
+        App oldApp = appService.getById(id);
+        ThrowUtils.throwIf(oldApp == null, ErrorCode.NOT_FOUND_ERROR);
+        // 已是该状态
+        if (oldApp.getReviewStatus().equals(reviewStatus)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "请勿重复审核");
+        }
+        // 更新审核状态
+        User loginUser = userService.getLoginUser(request);
+        App app = new App();
+        app.setId(id);
+        app.setReviewStatus(reviewStatus);
+        app.setReviewMessage(reviewRequest.getReviewMessage());
+        app.setReviewerId(loginUser.getId());
+        app.setReviewTime(new Date());
+        boolean result = appService.updateById(app);
+        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+        return ResultUtils.success(true);
+    }
 }

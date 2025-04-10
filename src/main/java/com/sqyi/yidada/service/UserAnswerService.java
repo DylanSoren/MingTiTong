@@ -3,7 +3,7 @@ package com.sqyi.yidada.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.sqyi.yidada.model.dto.userAnswer.UserAnswerQueryRequest;
+import com.sqyi.yidada.model.dto.useranswer.UserAnswerQueryRequest;
 import com.sqyi.yidada.model.entity.UserAnswer;
 import com.sqyi.yidada.model.vo.UserAnswerVO;
 
