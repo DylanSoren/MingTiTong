@@ -82,7 +82,7 @@ ai:
     keepAliveDuration: 1
   chat-completion-request-config:
     # 指定您创建的方舟推理接入点 ID
-    reasoningAccessPointId: ep-20250411150222-nkx9r
+    reasoningAccessPointId: doubao-1-5-vision-pro-32k-250115
     defaultMaxTokens: 1024
     unstableTemperature: 0.95
     stableTemperature: 0.05

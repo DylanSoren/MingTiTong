@@ -21,11 +21,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * @author sqyi
- *
+ * 自定义得分类策略
  */
 @ScoringStrategySetting(appType = 0, scoringStrategy = 0)
-public class CustomScoreScoringStrategy implements ScoringStrategy{
+public class CustomScoreScoringStrategy implements ScoringStrategy {
     @Resource
     private QuestionService questionService;
 

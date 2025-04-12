@@ -19,11 +19,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author sqyi
- *
+ * 自定义测评类策略
  */
 @ScoringStrategySetting(appType = 1, scoringStrategy = 0)
-public class CustomTestScoringStrategy implements ScoringStrategy{
+public class CustomTestScoringStrategy implements ScoringStrategy {
     @Resource
     private QuestionService questionService;
 

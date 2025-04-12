@@ -55,7 +55,7 @@ create table if not exists question
     index idx_appId (appId)
 ) comment '题目' collate = utf8mb4_unicode_ci;
 
--- 评分结果表
+-- 评分结果表  这个表存的是可能的评测结果
 create table if not exists scoring_result
 (
     id               bigint auto_increment comment 'id' primary key,
