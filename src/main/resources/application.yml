@@ -17,14 +17,12 @@ spring:
     # 30 天过期
     timeout: 2592000
   # 数据库配置
-  # todo 需替换配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/ai-basedquestionansweringapplicationplatformtables
     username: root
     password: ysq666666
   # Redis 配置
-  # todo 需替换配置，然后取消注释
   redis:
     database: 0
     host: localhost
@@ -72,3 +70,19 @@ knife4j:
         api-rule: package
         api-rule-resources:
           - com.sqyi.yidada.controller
+# AI配置
+ai:
+  service-config:
+    # 从环境变量中获取您的API Key，此处设置的是环境变量中API Key的名称
+    apiKeyName: ARK_API_KEY
+    # 此为默认路径，您可根据业务所在地域进行配置
+    baseUrl: https://ark.cn-beijing.volces.com/api/v3
+    # OkHttp 连接池配置（最大空闲连接数5个，保持时间1秒）
+    maxIdleConnections: 5
+    keepAliveDuration: 1
+  chat-completion-request-config:
+    # 指定您创建的方舟推理接入点 ID
+    reasoningAccessPointId: ep-20250411150222-nkx9r
+    defaultMaxTokens: 1024
+    unstableTemperature: 0.95
+    stableTemperature: 0.05

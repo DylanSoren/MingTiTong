@@ -12,8 +12,8 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 
 /**
- * @author DylanS
- * @version 1.0
+ * @author sqyi
+ *
  */
 @Service
 public class ScoringStrategyExecutor {
