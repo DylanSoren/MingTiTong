@@ -21,7 +21,6 @@
 - MyBatis + MyBatis-Plus 数据访问（开启分页）
 - Spring Boot 调试工具和项目处理器
 - Spring AOP 切面编程
-- Spring 事务注解
 
 ### 数据存储
 
