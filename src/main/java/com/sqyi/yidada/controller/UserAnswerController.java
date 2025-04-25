@@ -15,8 +15,8 @@ import com.sqyi.yidada.model.dto.useranswer.UserAnswerEditRequest;
 import com.sqyi.yidada.model.dto.useranswer.UserAnswerQueryRequest;
 import com.sqyi.yidada.model.dto.useranswer.UserAnswerUpdateRequest;
 import com.sqyi.yidada.model.entity.App;
-import com.sqyi.yidada.model.entity.UserAnswer;
 import com.sqyi.yidada.model.entity.User;
+import com.sqyi.yidada.model.entity.UserAnswer;
 import com.sqyi.yidada.model.enums.ReviewStatusEnum;
 import com.sqyi.yidada.model.vo.UserAnswerVO;
 import com.sqyi.yidada.scoring.ScoringStrategyExecutor;
@@ -35,7 +35,6 @@ import java.util.List;
  * 用户答案接口
  *
  * @author sqyi
- *
  */
 @RestController
 @RequestMapping("/userAnswer")
@@ -196,7 +195,7 @@ public class UserAnswerController {
      */
     @PostMapping("/list/page/vo")
     public BaseResponse<Page<UserAnswerVO>> listUserAnswerVOByPage(@RequestBody UserAnswerQueryRequest userAnswerQueryRequest,
-                                                               HttpServletRequest request) {
+                                                                   HttpServletRequest request) {
         long current = userAnswerQueryRequest.getCurrent();
         long size = userAnswerQueryRequest.getPageSize();
         // 限制爬虫
@@ -217,7 +216,7 @@ public class UserAnswerController {
      */
     @PostMapping("/my/list/page/vo")
     public BaseResponse<Page<UserAnswerVO>> listMyUserAnswerVOByPage(@RequestBody UserAnswerQueryRequest userAnswerQueryRequest,
-                                                                 HttpServletRequest request) {
+                                                                     HttpServletRequest request) {
         ThrowUtils.throwIf(userAnswerQueryRequest == null, ErrorCode.PARAMS_ERROR);
         // 补充查询条件，只查询当前登录用户的数据
         User loginUser = userService.getLoginUser(request);

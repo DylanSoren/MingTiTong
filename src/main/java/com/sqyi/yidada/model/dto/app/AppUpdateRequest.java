@@ -9,7 +9,6 @@ import java.util.Date;
  * 更新应用请求
  *
  * @author sqyi
- *
  */
 @Data
 public class AppUpdateRequest implements Serializable {

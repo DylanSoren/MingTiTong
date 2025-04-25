@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
  * 应用服务
  *
  * @author sqyi
- *
  */
 public interface AppService extends IService<App> {
 
@@ -32,7 +31,7 @@ public interface AppService extends IService<App> {
      * @return
      */
     QueryWrapper<App> getQueryWrapper(AppQueryRequest appQueryRequest);
-    
+
     /**
      * 获取应用封装
      *

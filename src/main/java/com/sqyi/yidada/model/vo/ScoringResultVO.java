@@ -13,7 +13,6 @@ import java.util.List;
  * 评分结果视图
  *
  * @author sqyi
- *
  */
 @Data
 public class ScoringResultVO implements Serializable {

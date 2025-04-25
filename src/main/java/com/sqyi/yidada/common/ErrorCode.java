@@ -4,7 +4,6 @@ package com.sqyi.yidada.common;
  * 自定义错误码
  *
  * @author sqyi
- *
  */
 public enum ErrorCode {
 

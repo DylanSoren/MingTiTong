@@ -6,14 +6,14 @@ import com.sqyi.yidada.model.dto.user.UserQueryRequest;
 import com.sqyi.yidada.model.entity.User;
 import com.sqyi.yidada.model.vo.LoginUserVO;
 import com.sqyi.yidada.model.vo.UserVO;
-import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * 用户服务
  *
  * @author sqyi
- *   
  */
 public interface UserService extends IService<User> {
 

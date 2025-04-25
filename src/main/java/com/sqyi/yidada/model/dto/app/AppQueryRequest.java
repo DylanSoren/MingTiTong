@@ -10,7 +10,6 @@ import java.io.Serializable;
  * 查询应用请求
  *
  * @author sqyi
- *
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

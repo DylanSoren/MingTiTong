@@ -1,7 +1,5 @@
 package com.sqyi.yidada.service.impl;
 
-import static com.sqyi.yidada.constant.UserConstant.USER_LOGIN_STATE;
-
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -16,21 +14,23 @@ import com.sqyi.yidada.model.vo.LoginUserVO;
 import com.sqyi.yidada.model.vo.UserVO;
 import com.sqyi.yidada.service.UserService;
 import com.sqyi.yidada.utils.SqlUtils;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.sqyi.yidada.constant.UserConstant.USER_LOGIN_STATE;
+
 /**
  * 用户服务实现
  *
  * @author sqyi
- *   
  */
 @Service
 @Slf4j

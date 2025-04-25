@@ -5,13 +5,11 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * 查询题目请求
  *
  * @author sqyi
- *
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

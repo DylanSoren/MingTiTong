@@ -1,16 +1,17 @@
 package com.sqyi.yidada.model.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
-import lombok.Data;
 
 /**
  * 评分结果
+ *
  * @TableName scoring_result
  */
-@TableName(value ="scoring_result")
+@TableName(value = "scoring_result")
 @Data
 public class ScoringResult implements Serializable {
     /**

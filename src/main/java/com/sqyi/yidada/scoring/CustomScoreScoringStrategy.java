@@ -14,7 +14,6 @@ import com.sqyi.yidada.service.QuestionService;
 import com.sqyi.yidada.service.ScoringResultService;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;

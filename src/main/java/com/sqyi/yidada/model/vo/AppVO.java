@@ -11,7 +11,6 @@ import java.util.Date;
  * 应用视图
  *
  * @author sqyi
- *
  */
 @Data
 public class AppVO implements Serializable {

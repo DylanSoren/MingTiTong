@@ -4,7 +4,6 @@ package com.sqyi.yidada.constant;
  * 用户常量
  *
  * @author sqyi
- * 
  */
 public interface UserConstant {
 

@@ -1,15 +1,15 @@
 package com.sqyi.yidada.model.dto.user;
 
 import com.sqyi.yidada.common.PageRequest;
-import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
 
 /**
  * 用户查询请求
  *
  * @author sqyi
- *   
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

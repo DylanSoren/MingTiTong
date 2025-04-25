@@ -54,7 +54,7 @@ public class CustomTestScoringStrategy implements ScoringStrategy {
                 ErrorCode.PARAMS_ERROR, "题目和用户答案数量不一致");
 
         // 遍历每道题
-        for (QuestionContentDTO questionContentDTO :questionContentDTOList) {
+        for (QuestionContentDTO questionContentDTO : questionContentDTOList) {
             // 遍历用户的每个答案
             for (String choice : choices) {
                 // 遍历题目的每个选项

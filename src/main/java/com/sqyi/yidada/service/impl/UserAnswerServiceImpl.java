@@ -35,7 +35,6 @@ import java.util.stream.Collectors;
  * 用户答案服务实现
  *
  * @author sqyi
- *
  */
 @Service
 @Slf4j

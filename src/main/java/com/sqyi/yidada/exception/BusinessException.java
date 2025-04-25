@@ -6,7 +6,6 @@ import com.sqyi.yidada.common.ErrorCode;
  * 自定义异常类
  *
  * @author sqyi
- *   
  */
 public class BusinessException extends RuntimeException {
 

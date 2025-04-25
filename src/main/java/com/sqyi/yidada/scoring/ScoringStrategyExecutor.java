@@ -8,12 +8,10 @@ import com.sqyi.yidada.model.entity.UserAnswer;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.lang.annotation.Annotation;
 import java.util.List;
 
 /**
  * @author sqyi
- *
  */
 @Service
 public class ScoringStrategyExecutor {

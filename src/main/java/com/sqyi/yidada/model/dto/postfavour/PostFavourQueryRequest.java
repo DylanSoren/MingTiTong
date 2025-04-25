@@ -2,15 +2,15 @@ package com.sqyi.yidada.model.dto.postfavour;
 
 import com.sqyi.yidada.common.PageRequest;
 import com.sqyi.yidada.model.dto.post.PostQueryRequest;
-import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
 
 /**
  * 帖子收藏查询请求
  *
  * @author sqyi
- *   
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

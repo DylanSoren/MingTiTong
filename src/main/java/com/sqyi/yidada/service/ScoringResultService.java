@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
  * 评分结果服务
  *
  * @author sqyi
- *
  */
 public interface ScoringResultService extends IService<ScoringResult> {
 
@@ -21,7 +20,7 @@ public interface ScoringResultService extends IService<ScoringResult> {
      * 校验数据
      *
      * @param scoringResult
-     * @param add 对创建的数据进行校验
+     * @param add           对创建的数据进行校验
      */
     void validScoringResult(ScoringResult scoringResult, boolean add);
 
@@ -32,7 +31,7 @@ public interface ScoringResultService extends IService<ScoringResult> {
      * @return
      */
     QueryWrapper<ScoringResult> getQueryWrapper(ScoringResultQueryRequest scoringResultQueryRequest);
-    
+
     /**
      * 获取评分结果封装
      *

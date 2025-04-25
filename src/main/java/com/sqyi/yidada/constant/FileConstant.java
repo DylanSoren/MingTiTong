@@ -4,7 +4,6 @@ package com.sqyi.yidada.constant;
  * 文件常量
  *
  * @author sqyi
- * 
  */
 public interface FileConstant {
 

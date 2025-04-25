@@ -1,13 +1,13 @@
 package com.sqyi.yidada.model.dto.postfavour;
 
-import java.io.Serializable;
 import lombok.Data;
+
+import java.io.Serializable;
 
 /**
  * 帖子收藏 / 取消收藏请求
  *
  * @author sqyi
- *   
  */
 @Data
 public class PostFavourAddRequest implements Serializable {

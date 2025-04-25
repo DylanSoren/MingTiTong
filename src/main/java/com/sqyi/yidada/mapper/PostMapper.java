@@ -2,6 +2,7 @@ package com.sqyi.yidada.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.sqyi.yidada.model.entity.Post;
+
 import java.util.Date;
 import java.util.List;
 
@@ -9,7 +10,6 @@ import java.util.List;
  * 帖子数据库操作
  *
  * @author sqyi
- *   
  */
 public interface PostMapper extends BaseMapper<Post> {
 

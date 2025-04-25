@@ -4,7 +4,6 @@ package com.sqyi.yidada.common;
  * 返回工具类
  *
  * @author sqyi
- * 
  */
 public class ResultUtils {
 

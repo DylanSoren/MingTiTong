@@ -1,10 +1,8 @@
 package com.sqyi.yidada;
 
-import com.volcengine.ark.runtime.model.completion.chat.ChatCompletionRequest;
-import com.volcengine.ark.runtime.model.completion.chat.ChatCompletionResult;
-import com.volcengine.ark.runtime.model.completion.chat.ChatMessage;
-import com.volcengine.ark.runtime.model.completion.chat.ChatMessageRole;
+import com.volcengine.ark.runtime.model.completion.chat.*;
 import com.volcengine.ark.runtime.service.ArkService;
+import io.reactivex.Flowable;
 import okhttp3.ConnectionPool;
 import okhttp3.Dispatcher;
 import org.junit.jupiter.api.Test;
@@ -63,39 +61,54 @@ public class ChatCompletionsExampleTest {
 
         // 发送请求并处理响应，逐条打印生成的回复
         ChatCompletionResult chatCompletionResult = arkService.createChatCompletion(chatCompletionRequest);
-        chatCompletionResult.getChoices()
-                .forEach(choice -> System.out.println(choice.getMessage().getContent()));
-
-//        System.out.println("\n---------- 流式请求示例 ----------");
-//        final List<ChatMessage> streamMessages = new ArrayList<>();
-//        final ChatMessage streamSystemMessage = ChatMessage.builder()
-//                                                            .role(ChatMessageRole.SYSTEM)
-//                                                            .content("你是人工智能助手.")
-//                                                            .build();
-//        final ChatMessage streamUserMessage = ChatMessage.builder()
-//                                                            .role(ChatMessageRole.USER)
-//                                                            .content("常见的十字花科植物有哪些？")
-//                                                            .build();
-//        streamMessages.add(streamSystemMessage);
-//        streamMessages.add(streamUserMessage);
-//
-//        ChatCompletionRequest streamChatCompletionRequest = ChatCompletionRequest.builder()
-//                // 指定您创建的方舟推理接入点 ID，此处已帮您修改为您的推理接入点 ID
-//                .model("ep-20250411150222-nkx9r")
-//                .messages(messages)
-//                .build();
-//
-//        service.streamChatCompletion(streamChatCompletionRequest)
-//                .doOnError(Throwable::printStackTrace)
-//                .blockingForEach(
-//                        choice -> {
-//                            if (!choice.getChoices().isEmpty()) {
-//                                System.out.print(choice.getChoices().get(0).getMessage().getContent());
-//                            }
-//                        }
-//                );
+        List<ChatCompletionChoice> chatCompletionChoiceList = chatCompletionResult.getChoices();
+        chatCompletionChoiceList.forEach(choice -> System.out.println(choice.getMessage().getContent()));
 
         // 关闭客户端线程池释放资源
         arkService.shutdownExecutor();
+    }
+
+    @Test
+    void test2() {
+        System.out.println("\n---------- 流式请求示例 ----------");
+        final List<ChatMessage> streamMessages = new ArrayList<>();
+        final ChatMessage streamSystemMessage = ChatMessage.builder()
+                                                            .role(ChatMessageRole.SYSTEM)
+                                                            .content("你是人工智能助手.")
+                                                            .build();
+        final ChatMessage streamUserMessage = ChatMessage.builder()
+                                                            .role(ChatMessageRole.USER)
+                                                            .content("常见的十字花科植物有哪些？")
+                                                            .build();
+        streamMessages.add(streamSystemMessage);
+        streamMessages.add(streamUserMessage);
+
+        ChatCompletionRequest streamChatCompletionRequest = ChatCompletionRequest.builder()
+                // 指定您创建的方舟推理接入点 ID，此处已帮您修改为您的推理接入点 ID
+                .model("ep-20250411150222-nkx9r")
+                .messages(streamMessages)
+                .stream(Boolean.TRUE)
+                .build();
+
+//        以下开始和非流式有区别
+        Flowable<ChatCompletionChunk> chatCompletionChunkFlowable =
+                arkService.streamChatCompletion(streamChatCompletionRequest)
+                        // 执行结束自动关闭arkService
+                        .doOnComplete(() -> arkService.shutdownExecutor())
+                        .doOnError(e -> {
+                            arkService.shutdownExecutor();
+                            e.printStackTrace();
+                        });
+
+        chatCompletionChunkFlowable.blockingForEach(
+                choice -> {
+                    if (!choice.getChoices().isEmpty()) {
+                        System.out.print(choice.getChoices().get(0).getMessage().getContent());
+                    }
+                }
+        );
+
+        // 关闭客户端线程池释放资源
+
     }
 }

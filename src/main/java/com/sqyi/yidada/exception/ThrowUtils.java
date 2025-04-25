@@ -6,7 +6,6 @@ import com.sqyi.yidada.common.ErrorCode;
  * 抛异常工具类
  *
  * @author sqyi
- *   
  */
 public class ThrowUtils {
 

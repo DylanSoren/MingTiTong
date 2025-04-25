@@ -1,14 +1,14 @@
 package com.sqyi.yidada.model.dto.post;
 
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.List;
-import lombok.Data;
 
 /**
  * 编辑请求
  *
  * @author sqyi
- *   
  */
 @Data
 public class PostEditRequest implements Serializable {

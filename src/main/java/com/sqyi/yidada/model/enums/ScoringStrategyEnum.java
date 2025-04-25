@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
  * 应用类型枚举
  *
  * @author sqyi
- *   
  */
 @Getter
 @AllArgsConstructor

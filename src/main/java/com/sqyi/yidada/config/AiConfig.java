@@ -12,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author sqyi
- *
  */
 @Configuration
 @ConfigurationProperties(prefix = "ai.service-config")

@@ -1,14 +1,14 @@
 package com.sqyi.yidada.model.vo;
 
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
-import lombok.Data;
 
 /**
  * 用户视图（脱敏）
  *
  * @author sqyi
- *   
  */
 @Data
 public class UserVO implements Serializable {

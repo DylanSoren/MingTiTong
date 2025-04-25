@@ -8,7 +8,6 @@ import java.io.Serializable;
  * 问题答案数据传输对象
  *
  * @author sqyi
- *
  */
 @Data
 public class QuestionAnswerDTO implements Serializable {

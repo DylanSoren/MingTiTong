@@ -10,16 +10,16 @@ import com.sqyi.yidada.model.entity.PostThumb;
 import com.sqyi.yidada.model.entity.User;
 import com.sqyi.yidada.service.PostService;
 import com.sqyi.yidada.service.PostThumbService;
-import javax.annotation.Resource;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
 
 /**
  * 帖子点赞服务实现
  *
  * @author sqyi
- *   
  */
 @Service
 public class PostThumbServiceImpl extends ServiceImpl<PostThumbMapper, PostThumb>

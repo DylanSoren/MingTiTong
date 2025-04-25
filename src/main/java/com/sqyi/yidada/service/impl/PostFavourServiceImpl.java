@@ -13,16 +13,16 @@ import com.sqyi.yidada.model.entity.PostFavour;
 import com.sqyi.yidada.model.entity.User;
 import com.sqyi.yidada.service.PostFavourService;
 import com.sqyi.yidada.service.PostService;
-import javax.annotation.Resource;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
 
 /**
  * 帖子收藏服务实现
  *
  * @author sqyi
- *   
  */
 @Service
 public class PostFavourServiceImpl extends ServiceImpl<PostFavourMapper, PostFavour>

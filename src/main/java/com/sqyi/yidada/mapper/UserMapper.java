@@ -7,7 +7,6 @@ import com.sqyi.yidada.model.entity.User;
  * 用户数据库操作
  *
  * @author sqyi
- *   
  */
 public interface UserMapper extends BaseMapper<User> {
 

@@ -1,10 +1,8 @@
 package com.sqyi.yidada.manager;
 
-import com.volcengine.ark.runtime.model.completion.chat.ChatCompletionRequest;
-import com.volcengine.ark.runtime.model.completion.chat.ChatCompletionResult;
-import com.volcengine.ark.runtime.model.completion.chat.ChatMessage;
-import com.volcengine.ark.runtime.model.completion.chat.ChatMessageRole;
+import com.volcengine.ark.runtime.model.completion.chat.*;
 import com.volcengine.ark.runtime.service.ArkService;
+import io.reactivex.Flowable;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -16,7 +14,6 @@ import java.util.List;
 
 /**
  * @author sqyi
- *
  */
 @Component
 @ConfigurationProperties(prefix = "ai.chat-completion-request-config")
@@ -33,6 +30,7 @@ public class AiManager {
 
     /**
      * 不稳定答案的请求（简化消息传递）
+     *
      * @param systemMessageContent
      * @param userMessageContent
      * @param maxTokens
@@ -44,6 +42,7 @@ public class AiManager {
 
     /**
      * 不稳定答案的请求（简化消息传递 + 默认maxTokens）
+     *
      * @param systemMessageContent
      * @param userMessageContent
      * @return
@@ -53,7 +52,8 @@ public class AiManager {
     }
 
     /**
-     * 不稳定答案的请求（简化消息传递）
+     * 稳定答案的请求（简化消息传递）
+     *
      * @param systemMessageContent
      * @param userMessageContent
      * @param maxTokens
@@ -64,7 +64,8 @@ public class AiManager {
     }
 
     /**
-     * 不稳定答案的请求（简化消息传递 + 默认maxTokens）
+     * 稳定答案的请求（简化消息传递 + 默认maxTokens）
+     *
      * @param systemMessageContent
      * @param userMessageContent
      * @return
@@ -132,7 +133,7 @@ public class AiManager {
                 .build();
 
         try {
-            // 发送请求并处理响应，逐条打印生成的回复
+            // 发送请求并处理响应
             ChatCompletionResult chatCompletionResult = arkService.createChatCompletion(chatCompletionRequest);
             String aiResponse = chatCompletionResult.getChoices().get(0).getMessage().getContent().toString();
 
@@ -140,6 +141,82 @@ public class AiManager {
             arkService.shutdownExecutor();
 
             return aiResponse;
+        } catch (Exception e) {
+            log.error("AI请求失败：", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 稳定答案的流式请求（简化消息传递 + 默认maxTokens）
+     *
+     * @param systemMessageContent
+     * @param userMessageContent
+     * @return
+     */
+    public Flowable<ChatCompletionChunk> doStreamStableRequest(String systemMessageContent, String userMessageContent) {
+        return doStreamRequest(systemMessageContent, userMessageContent, stableTemperature, defaultMaxTokens);
+    }
+
+    /**
+     * 通用流式请求（简化消息传递）
+     *
+     * @param systemMessageContent
+     * @param userMessageContent
+     * @param temperature
+     * @param maxTokens
+     * @return
+     */
+    public Flowable<ChatCompletionChunk> doStreamRequest(String systemMessageContent,
+                                                         String userMessageContent,
+                                                         Double temperature, Integer maxTokens) {
+        // 创建消息列表（包含系统提示和用户问题）
+        final List<ChatMessage> messages = new ArrayList<>();
+        // 系统角色消息：设置AI的基本行为
+        final ChatMessage systemMessage = ChatMessage.builder()
+                .role(ChatMessageRole.SYSTEM)
+                .content(systemMessageContent)
+                .build();
+        // 用户角色消息：提出问题
+        final ChatMessage userMessage = ChatMessage.builder()
+                .role(ChatMessageRole.USER)
+                .content(userMessageContent)
+                .build();
+        messages.add(systemMessage);
+        messages.add(userMessage);
+        return doStreamRequest(messages, temperature, maxTokens);
+    }
+
+    /**
+     * 通用流式请求
+     *
+     * @param messages
+     * @param temperature
+     * @param maxTokens
+     * @return
+     */
+    public Flowable<ChatCompletionChunk> doStreamRequest(List<ChatMessage> messages, Double temperature, Integer maxTokens) {
+        // 构建聊天补全请求
+        ChatCompletionRequest streamChatCompletionRequest = ChatCompletionRequest.builder()
+                .model(reasoningAccessPointId)
+                .stream(Boolean.TRUE)
+                .messages(messages)
+                .temperature(temperature)
+                .maxTokens(maxTokens)
+                .build();
+
+        try {
+            // 发送请求并处理响应
+            Flowable<ChatCompletionChunk> chatCompletionChunkFlowable =
+                    arkService.streamChatCompletion(streamChatCompletionRequest)
+                            // 流结束后自动关闭
+                            .doOnComplete(() -> arkService.shutdownExecutor())
+                            .doOnError(e -> {
+                                arkService.shutdownExecutor();
+                                log.error(e.getMessage());
+                            });
+
+            return chatCompletionChunkFlowable;
         } catch (Exception e) {
             log.error("AI请求失败：", e);
             throw new RuntimeException(e);

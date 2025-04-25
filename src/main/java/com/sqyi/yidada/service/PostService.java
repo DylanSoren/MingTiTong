@@ -6,13 +6,13 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.sqyi.yidada.model.dto.post.PostQueryRequest;
 import com.sqyi.yidada.model.entity.Post;
 import com.sqyi.yidada.model.vo.PostVO;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
  * 帖子服务
  *
  * @author sqyi
- *   
  */
 public interface PostService extends IService<Post> {
 

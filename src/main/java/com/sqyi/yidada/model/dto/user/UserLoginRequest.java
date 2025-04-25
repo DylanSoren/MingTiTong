@@ -1,13 +1,13 @@
 package com.sqyi.yidada.model.dto.user;
 
-import java.io.Serializable;
 import lombok.Data;
+
+import java.io.Serializable;
 
 /**
  * 用户登录请求
  *
  * @author sqyi
- *   
  */
 @Data
 public class UserLoginRequest implements Serializable {

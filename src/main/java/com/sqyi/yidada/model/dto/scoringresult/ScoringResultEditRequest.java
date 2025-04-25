@@ -9,7 +9,6 @@ import java.util.List;
  * 编辑评分结果请求
  *
  * @author sqyi
- *
  */
 @Data
 public class ScoringResultEditRequest implements Serializable {

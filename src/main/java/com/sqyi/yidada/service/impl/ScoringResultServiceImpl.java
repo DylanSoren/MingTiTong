@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
  * 评分结果服务实现
  *
  * @author sqyi
- *
  */
 @Service
 @Slf4j

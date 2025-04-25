@@ -1,5 +1,6 @@
 package com.sqyi.yidada.controller;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sqyi.yidada.annotation.AuthCheck;
@@ -20,19 +21,24 @@ import com.sqyi.yidada.model.vo.QuestionVO;
 import com.sqyi.yidada.service.AppService;
 import com.sqyi.yidada.service.QuestionService;
 import com.sqyi.yidada.service.UserService;
+import com.volcengine.ark.runtime.model.completion.chat.ChatCompletionChunk;
+import io.reactivex.Flowable;
+import io.reactivex.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 题目接口
  *
  * @author sqyi
- *
  */
 @RestController
 @RequestMapping("/question")
@@ -47,7 +53,7 @@ public class QuestionController {
 
     @Resource
     private AppService appService;
-    
+
     @Resource
     private AiManager aiManager;
 
@@ -304,11 +310,83 @@ public class QuestionController {
         // 封装 Prompt
         String userMessage = getGenerateQuestionUserMessage(app, questionNumber, optionNumber);
         // ai调用
-        String result = aiManager.doStableRequest(userMessage, GENERATE_QUESTION_SYSTEM_MESSAGE);
+        String result = aiManager.doStableRequest(GENERATE_QUESTION_SYSTEM_MESSAGE, userMessage);
         // 封装结果
         List<QuestionContentDTO> questionContentDTOList = JSONUtil.toList(result, QuestionContentDTO.class);
         return ResultUtils.success(questionContentDTOList);
     }
 
+    @GetMapping("/ai_generate/sse")
+    public SseEmitter aiGenerateQuestionSse(AiGenerateQuestionRequest aiGenerateQuestionRequest) {
+        ThrowUtils.throwIf(aiGenerateQuestionRequest == null, ErrorCode.PARAMS_ERROR);
+        // 获取参数
+        Long appId = aiGenerateQuestionRequest.getAppId();
+        int questionNumber = aiGenerateQuestionRequest.getQuestionNumber();
+        int optionNumber = aiGenerateQuestionRequest.getOptionNumber();
+        // 获取应用信息
+        App app = appService.getById(appId);
+        ThrowUtils.throwIf(app == null, ErrorCode.NOT_FOUND_ERROR);
+        // 封装 Prompt
+        String userMessage = getGenerateQuestionUserMessage(app, questionNumber, optionNumber);
+        // 建立 SSE 连接对象，0 表示永不超时
+        SseEmitter emitter = new SseEmitter(0L);
+        // AI 生成，sse 流式返回
+        Flowable<ChatCompletionChunk> chatCompletionChunkFlowable =
+                aiManager.doStreamStableRequest(GENERATE_QUESTION_SYSTEM_MESSAGE, userMessage);
+        StringBuffer contentBuilder = new StringBuffer();
+        AtomicInteger flag = new AtomicInteger(0);
+        // 这是整个数据流的源头，扮演被观察者角色
+        chatCompletionChunkFlowable
+                // 此操作符将后续所有操作（map、flatMap、doOnNext 等）
+                // 切换到 IO 线程池中执行。
+                // IO 线程池适用于异步阻塞型任务（如网络请求、文件读写），
+                // 且线程数量可动态增长以应对高并发。
+                .observeOn(Schedulers.io())
+                // 从数据块中提取内容字段
+                .map(chunk -> (String) chunk.getChoices().get(0).getMessage().getContent())
+                // 移除所有空白字符（包括换行、空格等），简化后续处理
+                .map(message -> message.replaceAll("\\s", ""))
+                // 过滤掉空字符串，确保只处理有效数据
+                .filter(StrUtil::isNotBlank)
+                // FlatMap操作符使用一个指定的函数对原始Observable发射的每一项数据执行变换操作，
+                // 这个函数返回一个本身也发射数据的Observable，
+                // 然后FlatMap合并这些Observables发射的数据，最后将合并后的结果当做它自己的数据序列发射
+                .flatMap(message -> {
+                    // 将字符串转换为 List<Character>
+                    List<Character> charList = new ArrayList<>();
+                    for (char c : message.toCharArray()) {
+                        charList.add(c);
+                    }
+                    // 将字符列表（List<Character>）
+                    // 转换为一个 RxJava 的流（Flowable<Character>），
+                    // 使得列表中的每个字符可以作为一个独立的事件被逐个发射到下游
+                    return Flowable.fromIterable(charList);
+                })
+                .doOnNext(c -> {
+                    {
+                        // 识别第一个 [ 表示开始 AI 传输 json 数据，打开 flag 开始拼接 json 数组
+                        if (c == '{') {
+                            flag.addAndGet(1);
+                        }
+                        if (flag.get() > 0) {
+                            contentBuilder.append(c);
+                        }
+                        if (c == '}') {
+                            flag.addAndGet(-1);
+                            if (flag.get() == 0) {
+                                // 累积单套题目满足 json 格式后，sse 推送至前端
+                                // sse 需要压缩成当行 json，sse 无法识别换行
+                                emitter.send(JSONUtil.toJsonStr(contentBuilder.toString()));
+                                // 清空 StringBuilder
+                                contentBuilder.setLength(0);
+                            }
+                        }
+                    }
+                }).doOnComplete(emitter::complete)
+                // .subscribe() 方法是启动数据流处理的核心入口
+                // 调用该方法后，被观察者开始按照定义的逻辑发射数据，观察并处理这些数据。
+                .subscribe();
+        return emitter;
+    }
     // endregion
 }
